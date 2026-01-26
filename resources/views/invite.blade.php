@@ -9,23 +9,26 @@ if (session('submitted')) {
 $initialStep = 4;
 } elseif ($errors->has('date_type')) {
 $initialStep = 2;
-} elseif ($errors->has('scheduled_at') || $errors->has('message')) {
+} elseif ($errors->has('scheduled_date') || $errors->has('message')) {
 $initialStep = 3;
 } elseif (old('date_type')) {
 $initialStep = 4;
 }
+$eveningLabel = \Illuminate\Support\Carbon::createFromFormat('H:i', config('invite.evening_time', '19:00'))
+->format('g:i A');
 @endphp
 
-<div class="mx-auto flex w-full max-w-3xl flex-col gap-6" x-data="inviteFlow({
+<div class="mx-auto flex w-full max-w-4xl flex-col gap-6" x-data="inviteFlow({
         initialStep: {{ $initialStep }},
         submitted: @js(session('submitted', false)),
         prefill: @js([
             'date_type' => old('date_type'),
-            'scheduled_at' => old('scheduled_at'),
+            'scheduled_date' => old('scheduled_date'),
             'message' => old('message'),
         ]),
         dateTypes: @js($dateTypes),
-        unavailable: @js($unavailable),
+        availableDates: @js($availableDates),
+        eveningLabel: @js($eveningLabel),
         token: @js(request('t')),
     })" x-init="init()" x-effect="persist()" x-cloak>
     <header
@@ -81,8 +84,6 @@ $initialStep = 4;
             @csrf
             <input type="hidden" name="t" :value="token">
             <input type="hidden" name="date_type" x-model="date_type">
-            <input type="hidden" name="scheduled_at" x-model="scheduled_at">
-            <input type="hidden" name="message" x-model="message">
 
             <div x-show="step === 1" x-transition.opacity.duration.300>
                 <div class="space-y-4">
@@ -113,9 +114,10 @@ $initialStep = 4;
                         class="group flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-ink/60 text-left transition hover:-translate-y-1 hover:border-ember/60 hover:bg-ink/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
                         :class="date_type === '{{ $key }}' ? 'border-ember/80 bg-ink/90 ring-2 ring-ember/30' : ''"
                         @click="selectType('{{ $key }}')" :aria-pressed="date_type === '{{ $key }}'">
-                        <img src="{{ $option['image'] }}" alt="" class="h-28 w-full object-cover">
+                        <img src="{{ $option['image'] }}" alt="" class="h-56 w-full object-cover">
                         <div class="flex flex-1 flex-col gap-2 px-4 py-4">
-                            <div class="flex items-center justify-between text-xs text-steel">
+                            <div
+                                class="flex items-center justify-start space-x-1 text-[0.625rem] tracking-wide font-semibold text-steel">
                                 <span class="rounded-full border border-white/10 bg-white/5 px-2.5 py-1">{{
                                     $option['map'] }}</span>
                                 <span class="rounded-full border border-white/10 bg-white/5 px-2.5 py-1">{{
@@ -146,34 +148,30 @@ $initialStep = 4;
 
             <div x-show="step === 3" x-transition.opacity.duration.300 class="space-y-6">
                 <div class="space-y-2">
-                    <h2 class="font-display text-2xl font-semibold">Choose date + time</h2>
-                    <p class="text-sm text-steel">Pick a slot or leave it loose and we’ll coordinate later.</p>
+                    <h2 class="font-display text-2xl font-semibold">Choose the day</h2>
+                    <p class="text-sm text-steel">All options are evening around {{ $eveningLabel }}.</p>
                 </div>
 
                 <div class="space-y-3">
-                    <label class="block text-sm font-medium text-sand" for="scheduled_at">Time slot</label>
-                    <input id="scheduled_at" type="datetime-local"
-                        class="w-full rounded-2xl border border-white/10 bg-ink/60 px-4 py-3 text-sm text-sand placeholder:text-steel shadow-inner shadow-black/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
-                        x-model="scheduled_at" @change="touchDate()">
-                    <p class="text-xs text-steel">Optional: you can leave this empty and we’ll pick a time over coffee.
-                    </p>
-                    <p class="text-xs text-rose" x-show="scheduled_at && isUnavailable(scheduled_at)"
-                        aria-live="polite">
-                        That slot is blocked — pick another.
-                    </p>
-                    @if (count($unavailable))
-                    <div class="flex flex-wrap gap-2 text-xs text-steel">
-                        <span class="rounded-full border border-white/10 bg-white/5 px-2.5 py-1">Unavailable:</span>
-                        @foreach ($unavailable as $blocked)
-                        <span class="rounded-full border border-white/10 bg-white/5 px-2.5 py-1">{{ $blocked }}</span>
+                    <label class="block text-sm font-medium text-sand" for="scheduled_date">Available days</label>
+                    <select id="scheduled_date" name="scheduled_date"
+                        class="w-full rounded-2xl border border-white/10 bg-ink/60 px-4 py-3 text-sm text-sand shadow-inner shadow-black/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+                        x-model="scheduled_date">
+                        <option value="">Select a day</option>
+                        @foreach ($availableDates as $availableDate)
+                        @php
+                        $displayDate = \Illuminate\Support\Carbon::createFromFormat('Y-m-d', $availableDate)
+                        ->format('l • F j, Y');
+                        @endphp
+                        <option value="{{ $availableDate }}">{{ $displayDate }}</option>
                         @endforeach
-                    </div>
-                    @endif
+                    </select>
+                    <p class="text-xs text-steel">Each option locks in an evening time — no extra scheduling steps.</p>
                 </div>
 
                 <div class="space-y-3">
                     <label class="block text-sm font-medium text-sand" for="message">Anything you want to add?</label>
-                    <textarea id="message" rows="4"
+                    <textarea id="message" name="message" rows="4"
                         class="w-full rounded-2xl border border-white/10 bg-ink/60 px-4 py-3 text-sm text-sand placeholder:text-steel shadow-inner shadow-black/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
                         placeholder="Want to bring snacks? A playlist? Any special request?"
                         x-model="message"></textarea>
@@ -187,7 +185,8 @@ $initialStep = 4;
                     </button>
                     <button type="button"
                         class="inline-flex items-center gap-2 rounded-full bg-ember px-5 py-2 text-sm font-semibold text-ink shadow-lg shadow-ember/30 transition hover:-translate-y-0.5 hover:bg-copper focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
-                        @click="next()">
+                        @click="next()" :disabled="!scheduled_date"
+                        :class="!scheduled_date ? 'opacity-60 grayscale' : ''">
                         Review loadout
                         <span aria-hidden="true">→</span>
                     </button>
@@ -208,7 +207,7 @@ $initialStep = 4;
                             <p class="text-xs text-steel" x-text="typeLabel()"></p>
                         </div>
                         <div>
-                            <p class="text-xs uppercase tracking-[0.2em] text-steel">Time</p>
+                            <p class="text-xs uppercase tracking-[0.2em] text-steel">Day</p>
                             <p class="font-semibold" x-text="formattedDate()"></p>
                         </div>
                         <div x-show="message">
@@ -226,8 +225,7 @@ $initialStep = 4;
                     </button>
                     <button type="submit"
                         class="inline-flex items-center gap-2 rounded-full bg-ember px-5 py-2 text-sm font-semibold text-ink shadow-lg shadow-ember/30 transition hover:-translate-y-0.5 hover:bg-copper focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
-                        :disabled="submitted || (scheduled_at && isUnavailable(scheduled_at))"
-                        :class="submitted ? 'opacity-60 grayscale' : ''">
+                        :disabled="submitted || !scheduled_date" :class="submitted ? 'opacity-60 grayscale' : ''">
                         Send invite
                         <span aria-hidden="true">✔</span>
                     </button>
@@ -249,10 +247,11 @@ $initialStep = 4;
             initialStep: config.initialStep || 1,
             submitted: config.submitted || false,
             dateTypes: config.dateTypes || {},
-            unavailable: config.unavailable || [],
+            availableDates: config.availableDates || [],
+            eveningLabel: config.eveningLabel || 'Evening',
             token: config.token || '',
             date_type: config.prefill?.date_type || '',
-            scheduled_at: config.prefill?.scheduled_at || '',
+            scheduled_date: config.prefill?.scheduled_date || '',
             message: config.prefill?.message || '',
             init() {
                 if (this.submitted) {
@@ -265,7 +264,7 @@ $initialStep = 4;
                 if (saved) {
                     this.step = saved.step || this.step;
                     this.date_type = saved.date_type || this.date_type;
-                    this.scheduled_at = saved.scheduled_at || this.scheduled_at;
+                    this.scheduled_date = saved.scheduled_date || this.scheduled_date;
                     this.message = saved.message || this.message;
                 } else {
                     this.step = this.initialStep;
@@ -278,7 +277,7 @@ $initialStep = 4;
                 const payload = {
                     step: this.step,
                     date_type: this.date_type,
-                    scheduled_at: this.scheduled_at,
+                    scheduled_date: this.scheduled_date,
                     message: this.message,
                 };
                 window.sessionStorage.setItem('inviteState', JSON.stringify(payload));
@@ -322,25 +321,14 @@ $initialStep = 4;
                 return this.dateTypes?.[this.date_type]?.label || '—';
             },
             formattedDate() {
-                if (!this.scheduled_at) {
-                    return 'No exact time yet';
+                if (!this.scheduled_date) {
+                    return 'No day selected';
                 }
-                const parsed = new Date(this.scheduled_at);
+                const parsed = new Date(`${this.scheduled_date}T00:00:00`);
                 if (Number.isNaN(parsed?.valueOf())) {
-                    return this.scheduled_at;
+                    return this.scheduled_date;
                 }
-                return parsed.toLocaleString();
-            },
-            isUnavailable(value) {
-                return this.unavailable.includes(value);
-            },
-            touchDate() {
-                if (!this.scheduled_at) {
-                    return;
-                }
-                if (this.isUnavailable(this.scheduled_at)) {
-                    this.step = 3;
-                }
+                return `${parsed.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })} • ${this.eveningLabel}`;
             },
         }));
     });

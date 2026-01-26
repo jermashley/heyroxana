@@ -19,6 +19,8 @@ php artisan key:generate
 Set values in `.env`:
 - `APP_URL`
 - `INVITEE_NAME`
+- `INVITE_AVAILABLE_DATES` (comma-separated `YYYY-MM-DD`)
+- `INVITE_EVENING_TIME` (24h format, e.g. `19:00`)
 - `MAIL_TO_ADDRESS`
 - Mailgun SMTP settings (see below)
 
