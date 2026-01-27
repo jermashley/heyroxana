@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Invite')
+@section('title', 'Hey ' . $inviteeName . ' :)')
 
 @section('content')
 @php
@@ -110,10 +110,12 @@ $eveningLabel = \Illuminate\Support\Carbon::createFromFormat('H:i', config('invi
                 <div class="grid gap-4 sm:grid-cols-3">
                     @foreach ($dateTypes as $key => $option)
                     <button type="button"
-                        class="group flex h-full flex-col overflow-hidden rounded-2xl border-2 border-ink bg-sand text-left shadow-[4px_4px_0_0_rgba(43,27,21,0.9)] transition hover:-translate-y-1 hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
-                        :class="date_type === '{{ $key }}' ? 'ring-2 ring-ember/50' : ''"
-                        @click="selectType('{{ $key }}')" :aria-pressed="date_type === '{{ $key }}'">
-                        <img src="{{ $option['image'] }}" alt="" class="h-56 w-full object-cover">
+                        class="group flex h-full flex-col overflow-hidden rounded-2xl border-2 border-ink bg-sand text-left shadow-[4px_4px_0_0_rgba(43,27,21,0.9)] transition hover:-translate-y-1 hover:bg-white focus-visible:outline focus-visible:outline-8 focus-visible:outline-offset-2 focus-visible:outline-ember"
+                        :class="date_type === '{{ $key }}' ? 'ring-5 ring-ember' : ''" @click="selectType('{{ $key }}')"
+                        :aria-pressed="date_type === '{{ $key }}'">
+                        <img src="{{ $option['image'] }}" alt=""
+                            class="h-56 w-full object-cover transition-all duration-200 ease-in-out"
+                            :class="date_type !== '{{ $key }}' ? 'grayscale-75' : ''">
                         <div class="flex flex-1 flex-col gap-2 px-4 py-4">
                             <div
                                 class="flex items-center justify-start space-x-1 text-[0.625rem] tracking-wide font-semibold text-steel">

@@ -16,8 +16,9 @@ class TokenMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         $token = $request->input('t');
+        $allowed = config('invite.expected_tokens', []);
 
-        if ($token !== config('invite.expected_token')) {
+        if (! in_array($token, $allowed, true)) {
             return response()
                 ->view('qr-only-404', [], 404);
         }
