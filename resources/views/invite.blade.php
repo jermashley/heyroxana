@@ -18,6 +18,10 @@ $eveningLabel = \Illuminate\Support\Carbon::createFromFormat('H:i', config('invi
 ->format('g:i A');
 @endphp
 
+<div class="flex justify-center pt-2 mb-8">
+    <img src="{{ asset('images/hey_roxana.png') }}" alt="Hey Roxana" class="h-24 w-auto sm:h-28">
+</div>
+
 <div class="mx-auto flex w-full max-w-4xl flex-col gap-6" x-data="inviteFlow({
         initialStep: {{ $initialStep }},
         submitted: @js(session('submitted', false)),

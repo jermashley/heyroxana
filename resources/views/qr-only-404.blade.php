@@ -4,6 +4,9 @@
 
 @section('content')
 <div class="mx-auto flex w-full max-w-2xl flex-col gap-6">
+    <div class="flex justify-center pt-2">
+        <img src="{{ asset('images/hey_roxana.png') }}" alt="Hey Roxana" class="h-24 w-auto sm:h-28">
+    </div>
     <div class="rounded-3xl border-2 border-ink bg-slate px-6 py-8 text-center shadow-[6px_6px_0_0_rgba(43,27,21,0.9)]">
         <div
             class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border-2 border-ink bg-ember/20 text-2xl">
