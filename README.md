@@ -1,6 +1,6 @@
 # CS2-Themed Invite (Laravel 12)
 
-A cute, playful CS2-inspired invite flow built with Laravel 12, Blade, Tailwind, and Alpine.js. It guides the recipient through a 4-step map-select style form and sends a Mailgun notification when submitted.
+A cute, playful CS2-inspired invite flow built with Laravel 12, Blade, Tailwind, and Alpine.js. It guides the recipient through a 4-step map-select style form and sends a MailerSend notification when submitted.
 
 ## Setup
 
@@ -22,7 +22,7 @@ Set values in `.env`:
 - `INVITE_AVAILABLE_DATES` (comma-separated `YYYY-MM-DD`)
 - `INVITE_EVENING_TIME` (24h format, e.g. `19:00`)
 - `MAIL_TO_ADDRESS`
-- Mailgun SMTP settings (see below)
+- MailerSend API settings (see below)
 
 3) Database
 ```
@@ -40,22 +40,21 @@ Visit:
 http://localhost:8000/invite?t=10172024
 ```
 
-## Mailgun (SMTP)
+## MailerSend (API)
 
-This app uses the SMTP mailer by default. In `.env`:
+Install the MailerSend Laravel adapter:
 ```
-MAIL_MAILER=smtp
-MAIL_HOST=smtp.mailgun.org
-MAIL_PORT=587
-MAIL_SCHEME=tls
-MAIL_USERNAME=postmaster@YOUR_DOMAIN
-MAIL_PASSWORD=YOUR_SMTP_PASSWORD
-MAIL_FROM_ADDRESS="hello@YOUR_DOMAIN"
+composer require mailersend/laravel-driver
+```
+
+In `.env`:
+```
+MAIL_MAILER=mailersend
+MAILERSEND_API_KEY=ms_your_api_key
+MAIL_FROM_ADDRESS="hello@your-domain.com"
 MAIL_FROM_NAME="CS2 Invite"
 MAIL_TO_ADDRESS="you@example.com"
 ```
-
-Optional: If you prefer the Mailgun API transport, install the Mailgun mailer package and set `MAIL_MAILER=mailgun`.
 
 ## Forge Deployment (quick)
 

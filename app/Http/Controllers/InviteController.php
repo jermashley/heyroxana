@@ -54,8 +54,24 @@ class InviteController extends Controller
         }
 
         return redirect()
-            ->route('invite.show', ['t' => $validated['t']])
-            ->with('submitted', true);
+            ->route('invite.success', [
+                't' => $validated['t'],
+                'submission' => $submission->id,
+            ]);
+    }
+
+    public function success(Request $request, InviteSubmission $submission)
+    {
+        if ($submission->token !== $request->input('t')) {
+            abort(404);
+        }
+
+        return view('invite-success', [
+            'inviteeName' => config('invite.invitee_name'),
+            'submission' => $submission,
+            'eveningLabel' => Carbon::createFromFormat('H:i', config('invite.evening_time', '19:00'))
+                ->format('g:i A'),
+        ]);
     }
 
     private function dateTypes(): array

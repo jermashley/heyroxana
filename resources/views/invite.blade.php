@@ -5,9 +5,7 @@
 @section('content')
 @php
 $initialStep = 1;
-if (session('submitted')) {
-$initialStep = 4;
-} elseif ($errors->has('date_type')) {
+if ($errors->has('date_type')) {
 $initialStep = 2;
 } elseif ($errors->has('scheduled_date') || $errors->has('message')) {
 $initialStep = 3;
@@ -24,7 +22,6 @@ $eveningLabel = \Illuminate\Support\Carbon::createFromFormat('H:i', config('invi
 
 <div class="mx-auto flex w-full max-w-4xl flex-col gap-6" x-data="inviteFlow({
         initialStep: {{ $initialStep }},
-        submitted: @js(session('submitted', false)),
         prefill: @js([
             'date_type' => old('date_type'),
             'scheduled_date' => old('scheduled_date'),
@@ -231,15 +228,10 @@ $eveningLabel = \Illuminate\Support\Carbon::createFromFormat('H:i', config('invi
                     </button>
                     <button type="submit"
                         class="inline-flex items-center gap-2 rounded-full border-2 border-ink bg-ember px-5 py-2 text-sm font-semibold text-ink shadow-[4px_4px_0_0_rgba(43,27,21,0.9)] transition hover:-translate-y-0.5 hover:bg-copper focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
-                        :disabled="submitted || !scheduled_date" :class="submitted ? 'opacity-60 grayscale' : ''">
+                        :disabled="!scheduled_date" :class="!scheduled_date ? 'opacity-60 grayscale' : ''">
                         Send the invite
                         <span aria-hidden="true">✔</span>
                     </button>
-                </div>
-
-                <div class="rounded-2xl border-2 border-moss bg-moss/10 px-4 py-3 text-sm text-moss" x-show="submitted"
-                    role="status">
-                    Invite sent! I’ll follow up with a heart and a happy meow.
                 </div>
             </div>
         </form>
@@ -251,7 +243,6 @@ $eveningLabel = \Illuminate\Support\Carbon::createFromFormat('H:i', config('invi
         Alpine.data('inviteFlow', (config) => ({
             step: config.initialStep || 1,
             initialStep: config.initialStep || 1,
-            submitted: config.submitted || false,
             dateTypes: config.dateTypes || {},
             availableDates: config.availableDates || [],
             eveningLabel: config.eveningLabel || 'Evening',
@@ -260,12 +251,6 @@ $eveningLabel = \Illuminate\Support\Carbon::createFromFormat('H:i', config('invi
             scheduled_date: config.prefill?.scheduled_date || '',
             message: config.prefill?.message || '',
             init() {
-                if (this.submitted) {
-                    this.clearSaved();
-                    this.step = 4;
-                    return;
-                }
-
                 const saved = this.restore();
                 if (saved) {
                     this.step = saved.step || this.step;
@@ -277,7 +262,7 @@ $eveningLabel = \Illuminate\Support\Carbon::createFromFormat('H:i', config('invi
                 }
             },
             persist() {
-                if (this.submitted || !window.sessionStorage) {
+                if (!window.sessionStorage) {
                     return;
                 }
                 const payload = {

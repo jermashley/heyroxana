@@ -13,14 +13,12 @@ class InviteSubmissionMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public function __construct(public InviteSubmission $submission)
-    {
-    }
+    public function __construct(public InviteSubmission $submission) {}
 
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'New CS2 Date Invite Submission',
+            subject: 'Hey Roxana Submission Received!',
         );
     }
 
