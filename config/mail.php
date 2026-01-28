@@ -53,10 +53,6 @@ return [
             'transport' => 'mailgun',
         ],
 
-        'mailersend' => [
-            'transport' => 'mailersend',
-        ],
-
         'ses' => [
             'transport' => 'ses',
         ],

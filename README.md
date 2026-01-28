@@ -1,6 +1,6 @@
 # CS2-Themed Invite (Laravel 12)
 
-A cute, playful CS2-inspired invite flow built with Laravel 12, Blade, Tailwind, and Alpine.js. It guides the recipient through a 4-step map-select style form and sends a MailerSend notification when submitted.
+A cute, playful CS2-inspired invite flow built with Laravel 12, Blade, Tailwind, and Alpine.js. It guides the recipient through a 4-step map-select style form and sends a Resend notification when submitted.
 
 ## Setup
 
@@ -22,7 +22,7 @@ Set values in `.env`:
 - `INVITE_AVAILABLE_DATES` (comma-separated `YYYY-MM-DD`)
 - `INVITE_EVENING_TIME` (24h format, e.g. `19:00`)
 - `MAIL_TO_ADDRESS`
-- MailerSend API settings (see below)
+- Resend API settings (see below)
 
 3) Database
 ```
@@ -40,17 +40,17 @@ Visit:
 http://localhost:8000/invite?t=10172024
 ```
 
-## MailerSend (API)
+## Resend (API)
 
-Install the MailerSend Laravel adapter:
+Install the Resend SDK:
 ```
-composer require mailersend/laravel-driver
+composer require resend/resend-php
 ```
 
 In `.env`:
 ```
-MAIL_MAILER=mailersend
-MAILERSEND_API_KEY=ms_your_api_key
+MAIL_MAILER=resend
+RESEND_API_KEY=re_your_api_key
 MAIL_FROM_ADDRESS="hello@your-domain.com"
 MAIL_FROM_NAME="CS2 Invite"
 MAIL_TO_ADDRESS="you@example.com"
