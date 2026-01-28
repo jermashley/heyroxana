@@ -63,7 +63,7 @@ class InviteController extends Controller
         return [
             'drive' => [
                 'title' => 'Free Roam Drive',
-                'label' => 'Coffee and driving with no set destination (we can drive past the same gas station a dozen times)',
+                'label' => 'Coffee and driving with no set destination. We can drive past the same gas station a dozen times :)',
                 'description' => 'No timer, just vibes and a looping patrol route.',
                 'image' => '/images/drive.png',
                 'map' => '📍 Open Road',
@@ -71,7 +71,7 @@ class InviteController extends Controller
             ],
             'barton' => [
                 'title' => 'Barton Springs Walk',
-                'label' => 'Coffee and a walk around Barton Springs (remember the bridge you dared me to jump into the creek from)',
+                'label' => 'Coffee and a walk around Barton Springs. Remember the bridge you dared me to jump into the creek from?',
                 'description' => 'Skyline views, railroad walks, and possibly calling your bluff to jump into the water.',
                 'image' => '/images/barton.png',
                 'map' => '📍 Barton Springs',
@@ -80,7 +80,7 @@ class InviteController extends Controller
             'san-marcos' => [
                 'title' => 'San Marcos River',
                 'label' => 'Coffee and a walk around San Marcos River',
-                'description' => 'That first deep talk, the moment I was sure.',
+                'description' => 'That first deep talk, the moment I felt like I could see you.',
                 'image' => '/images/san-marcos-river.png',
                 'map' => '📍 River Loop',
                 'loadout' => '💕 Heart Collar',

@@ -45,7 +45,7 @@ $eveningLabel = \Illuminate\Support\Carbon::createFromFormat('H:i', config('invi
         <div class="space-y-2">
             <p class="text-sm text-steel">Match made in a cozy cat cafe.</p>
             <h1 class="font-display text-3xl font-semibold text-ink sm:text-4xl">
-                Hey {{ $inviteeName }}, will you be my sweet Valentine?
+                Hey {{ $inviteeName }}, will you be my Valentine?
             </h1>
             <p class="text-sm text-steel">
                 Pick a location, choose a day, and I'll bring the sweetness. No rush, just cute vibes.
