@@ -4,19 +4,22 @@ A cute, playful CS2-inspired invite flow built with Laravel 12, Blade, Tailwind,
 
 ## Setup
 
-1) Install dependencies
+1. Install dependencies
+
 ```
 composer install
 npm install
 ```
 
-2) Configure environment
+2. Configure environment
+
 ```
 cp .env.example .env
 php artisan key:generate
 ```
 
 Set values in `.env`:
+
 - `APP_URL`
 - `INVITEE_NAME`
 - `INVITE_AVAILABLE_DATES` (comma-separated `YYYY-MM-DD`)
@@ -24,30 +27,35 @@ Set values in `.env`:
 - `MAIL_TO_ADDRESS`
 - Resend API settings (see below)
 
-3) Database
+3. Database
+
 ```
 php artisan migrate
 ```
 
-4) Run locally
+4. Run locally
+
 ```
 npm run dev
 php artisan serve
 ```
 
 Visit:
+
 ```
-http://localhost:8000/invite?t=10172024
+http://localhost:8000/invite?t={{ EXPECTED_TOKEN }}
 ```
 
 ## Resend (API)
 
 Install the Resend SDK:
+
 ```
 composer require resend/resend-php
 ```
 
 In `.env`:
+
 ```
 MAIL_MAILER=resend
 RESEND_API_KEY=re_your_api_key
@@ -58,17 +66,20 @@ MAIL_TO_ADDRESS="you@example.com"
 
 ## Forge Deployment (quick)
 
-1) Create site + repo + environment.
-2) Set `.env` values (see above) and run:
+1. Create site + repo + environment.
+2. Set `.env` values (see above) and run:
+
 ```
 composer install --no-dev
 php artisan migrate --force
 npm install
 npm run build
 ```
-3) Point your QR code to:
+
+3. Point your QR code to:
+
 ```
-https://your-domain.com/invite?t=10172024
+https://your-domain.com/invite?t={{ EXPECTED_TOKEN }}
 ```
 
 ## Customize
