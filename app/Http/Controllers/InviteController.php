@@ -8,19 +8,39 @@ use App\Models\InviteSubmission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 
 class InviteController extends Controller
 {
     public function show(Request $request)
     {
-        if (app()->isProduction() && config('invite.mail_to_address')) {
-            Mail::to(config('invite.mail_to_address'))->send(new InviteOpenedMail(
-                token: (string) $request->input('t'),
-                ipAddress: $request->ip(),
-                userAgent: $request->userAgent(),
-                openedAt: now()->toDateTimeString(),
-            ));
+        if (app()->isProduction()) {
+            $mailTo = config('invite.mail_to_address');
+
+            Log::info('Invite opened email check', [
+                'env' => app()->environment(),
+                'mail_to' => $mailTo,
+                'token' => (string) $request->input('t'),
+                'ip' => $request->ip(),
+            ]);
+
+            if ($mailTo) {
+                try {
+                    Mail::to($mailTo)->send(new InviteOpenedMail(
+                        token: (string) $request->input('t'),
+                        ipAddress: $request->ip(),
+                        userAgent: $request->userAgent(),
+                        openedAt: now()->toDateTimeString(),
+                    ));
+                    Log::info('Invite opened email sent');
+                } catch (\Throwable $error) {
+                    Log::error('Invite opened email failed', [
+                        'message' => $error->getMessage(),
+                        'type' => get_class($error),
+                    ]);
+                }
+            }
         }
 
         return view('invite', [
