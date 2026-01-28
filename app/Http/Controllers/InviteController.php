@@ -14,16 +14,13 @@ class InviteController extends Controller
 {
     public function show(Request $request)
     {
-        if (app()->environment('production')) {
-            $mailTo = config('invite.mail_to_address');
-            if ($mailTo) {
-                Mail::to($mailTo)->send(new InviteOpenedMail(
-                    token: (string) $request->input('t'),
-                    ipAddress: $request->ip(),
-                    userAgent: $request->userAgent(),
-                    openedAt: now()->toDateTimeString(),
-                ));
-            }
+        if (app()->isProduction() && config('invite.mail_to_address')) {
+            Mail::to(config('invite.mail_to_address'))->send(new InviteOpenedMail(
+                token: (string) $request->input('t'),
+                ipAddress: $request->ip(),
+                userAgent: $request->userAgent(),
+                openedAt: now()->toDateTimeString(),
+            ));
         }
 
         return view('invite', [
