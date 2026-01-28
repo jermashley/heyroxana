@@ -11,7 +11,7 @@
         <div
             class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border-2 border-ink bg-ember/20 text-2xl">
             🐱</div>
-        <h1 class="font-display text-3xl font-semibold text-ink">This kitten is QR-only</h1>
+        <h1 class="font-display text-3xl font-semibold text-ink">This invite is QR-only</h1>
         <p class="mt-3 text-sm text-steel">
             This link is locked. Please open the invite directly from the QR code so the token can verify it's really
             you.

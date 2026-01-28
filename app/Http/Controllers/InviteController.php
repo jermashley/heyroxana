@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\InviteOpenedMail;
 use App\Mail\InviteSubmissionMail;
 use App\Models\InviteSubmission;
 use Illuminate\Http\Request;
@@ -13,6 +14,18 @@ class InviteController extends Controller
 {
     public function show(Request $request)
     {
+        if (app()->environment('production')) {
+            $mailTo = config('invite.mail_to_address');
+            if ($mailTo) {
+                Mail::to($mailTo)->send(new InviteOpenedMail(
+                    token: (string) $request->input('t'),
+                    ipAddress: $request->ip(),
+                    userAgent: $request->userAgent(),
+                    openedAt: now()->toDateTimeString(),
+                ));
+            }
+        }
+
         return view('invite', [
             'inviteeName' => config('invite.invitee_name'),
             'dateTypes' => $this->dateTypes(),

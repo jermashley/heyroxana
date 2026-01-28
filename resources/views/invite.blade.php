@@ -31,7 +31,7 @@ $eveningLabel = \Illuminate\Support\Carbon::createFromFormat('H:i', config('invi
         availableDates: @js($availableDates),
         eveningLabel: @js($eveningLabel),
         token: @js(request('t')),
-    })" x-init="init()" x-effect="persist()" x-cloak>
+    })" x-init="init()" x-cloak>
     <header
         class="flex flex-col gap-4 rounded-3xl border-2 border-ink bg-slate px-6 py-6 shadow-[6px_6px_0_0_rgba(43,27,21,0.9)]">
         <div class="flex flex-wrap items-center gap-2 text-xs uppercase tracking-[0.2em] text-steel">
@@ -251,46 +251,7 @@ $eveningLabel = \Illuminate\Support\Carbon::createFromFormat('H:i', config('invi
             scheduled_date: config.prefill?.scheduled_date || '',
             message: config.prefill?.message || '',
             init() {
-                const saved = this.restore();
-                if (saved) {
-                    this.step = saved.step || this.step;
-                    this.date_type = saved.date_type || this.date_type;
-                    this.scheduled_date = saved.scheduled_date || this.scheduled_date;
-                    this.message = saved.message || this.message;
-                } else {
-                    this.step = this.initialStep;
-                }
-            },
-            persist() {
-                if (!window.sessionStorage) {
-                    return;
-                }
-                const payload = {
-                    step: this.step,
-                    date_type: this.date_type,
-                    scheduled_date: this.scheduled_date,
-                    message: this.message,
-                };
-                window.sessionStorage.setItem('inviteState', JSON.stringify(payload));
-            },
-            restore() {
-                if (!window.sessionStorage) {
-                    return null;
-                }
-                const raw = window.sessionStorage.getItem('inviteState');
-                if (!raw) {
-                    return null;
-                }
-                try {
-                    return JSON.parse(raw);
-                } catch (error) {
-                    return null;
-                }
-            },
-            clearSaved() {
-                if (window.sessionStorage) {
-                    window.sessionStorage.removeItem('inviteState');
-                }
+                this.step = this.initialStep;
             },
             next() {
                 if (this.step < 4) {
